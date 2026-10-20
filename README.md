@@ -1,7 +1,7 @@
 # Deadlock Mods Framework
 
 Framework de mods **solo cliente** para [Deadlock](https://store.steampowered.com/app/1422450/Deadlock/).
-Permite empaquetar varios mods (texturas, audio, textos) y que los usuarios los instalen,
+Permite empaquetar varios mods (texturas, audio, textos) para que los usuarios los instalen,
 actualicen y reviertan con un instalador automático.
 
 > Los mods son locales: los demás jugadores no ven ni escuchan tus cambios.
@@ -14,16 +14,16 @@ actualicen y reviertan con un instalador automático.
 
 ## Instalación (usuarios)
 
-1. Descargá el ZIP de la última versión desde **Releases** de este repositorio.
-2. Extraé el ZIP en una carpeta (por ejemplo `Documentos\DeadlockMods`).
-3. Cerrá Deadlock y ejecutá **`Instalar.bat`**.
+1. Descarga el ZIP de la última versión desde **Releases** de este repositorio.
+2. Extrae el ZIP en una carpeta (por ejemplo `Documentos\DeadlockMods`).
+3. Cierra Deadlock y ejecuta **`Instalar.bat`**.
 
 El instalador:
 
 - Detecta Deadlock automáticamente (registro de Steam + `libraryfolders.vdf` + todos los discos).
 - Copia los VPK a `game\citadel\addons`.
-- Agrega los paths de mods a `gameinfo.gi` (con respaldo).
-- Aplica parches de localización (con respaldo).
+- Agrega los paths de mods a `gameinfo.gi` (con copia de seguridad).
+- Aplica parches de localización (con copia de seguridad).
 - Guarda el estado original en `state\`.
 
 ## Actualizaciones
@@ -38,8 +38,8 @@ y vuelve a instalar automáticamente.
 
 ## Revertir
 
-Ejecutá **`Revertir.bat`**: restaura `gameinfo.gi`, los textos y los archivos originales,
-y borra el mod. Después reiniciá Deadlock.
+Ejecuta **`Revertir.bat`**: restaura `gameinfo.gi`, los textos y los archivos originales,
+y elimina el mod. Después reinicia Deadlock.
 
 ## Mods incluidos
 
@@ -67,8 +67,8 @@ y borra el mod. Después reiniciá Deadlock.
 
 ## Crear un mod nuevo
 
-1. Creá `mods\<id>\payload\` y poné ahí tus archivos (normalmente `pakNN_dir.vpk`).
-2. Creá `mods\<id>\mod.json`:
+1. Crea `mods\<id>\payload\` y pon ahí tus archivos (normalmente `pakNN_dir.vpk`).
+2. Crea `mods\<id>\mod.json`:
 
 ```json
 {
@@ -99,22 +99,22 @@ Campos:
 - **`files`** *(opcional)*: copias arbitrarias. `source` es relativo a la carpeta del mod;
   `dest` es relativo a la raíz de Deadlock.
 - **`localization`** *(opcional)*: parches de texto. `file` es relativo a `game\citadel\`.
-  Se hace respaldo automático y se revierte con `Revertir.bat`.
+  Se hace una copia de seguridad automática y se revierte con `Revertir.bat`.
 
-Los mods con `"enabled": false` se omiten. También podés elegir mods puntuales:
+Los mods con `"enabled": false` se omiten. También puedes elegir mods puntuales:
 `install.ps1 -Mods "ratking-pp,mi-mod"`.
 
 ## Publicar una versión
 
-1. Actualizá `version` en `framework/version.json` (y en `mod.json` si cambió el mod).
-2. Generá el paquete:
+1. Actualiza `version` en `framework/version.json` (y en `mod.json` si cambió el mod).
+2. Genera el paquete:
 
    ```powershell
    powershell -ExecutionPolicy Bypass -File scripts\pack-release.ps1
    ```
 
-3. Subí el tag y el ZIP como release (el tag debe ser `vX.Y.Z`). Ejecutá esto
-   **desde la carpeta del repo** o pasá `-R` para indicar el repositorio:
+3. Sube el tag y el ZIP como release (el tag debe ser `vX.Y.Z`). Ejecuta esto
+   **desde la carpeta del repo** o pasa `-R` para indicar el repositorio:
 
    ```powershell
    git tag v1.0.0
@@ -127,7 +127,7 @@ y descarga el asset que coincida con `assetPattern` de `version.json`.
 
 ## Notas
 
-- Un parche de Deadlock puede sobrescribir `gameinfo.gi` o los textos: volvé a ejecutar
+- Un parche de Deadlock puede sobrescribir `gameinfo.gi` o los textos: vuelve a ejecutar
   `Instalar.bat` después de una actualización grande del juego.
-- Si movés la carpeta del framework, mantené `state\` junto a `framework\` para poder revertir.
+- Si mueves la carpeta del framework, mantén `state\` junto a `framework\` para poder revertir.
 - `-Force` permite instalar con Deadlock abierto (no recomendado).
