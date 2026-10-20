@@ -17,7 +17,7 @@ New-Item -ItemType Directory -Force -Path $stage | Out-Null
 
 Copy-Item -LiteralPath (Join-Path $root "framework") -Destination $stage -Recurse -Force
 Copy-Item -LiteralPath (Join-Path $root "mods")      -Destination $stage -Recurse -Force
-foreach($name in @("Instalar.bat", "Revertir.bat", "Actualizar.bat", "README.md")){
+foreach($name in @("Instalar.bat", "Revertir.bat", "README.md")){
     $p = Join-Path $root $name
     if(Test-Path -LiteralPath $p){ Copy-Item -LiteralPath $p -Destination $stage -Force }
 }

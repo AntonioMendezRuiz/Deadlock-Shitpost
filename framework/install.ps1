@@ -2,12 +2,12 @@
     Deadlock Mods - instalador / revertidor / actualizador
 
     Uso:
-        Instalar:              install.ps1
-        Revertir:              install.ps1 -Revert
-        Ver actualizaciones:   install.ps1 -CheckUpdate
-        Actualizar:            install.ps1 -Update
-        Ruta manual:           install.ps1 -GamePath "D:\...\common\Deadlock"
-        Solo algunos mods:     install.ps1 -Mods "ratking-pp"
+        Instalar (y actualizar): install.ps1
+        Revertir:                install.ps1 -Revert
+        Ver actualizaciones:     install.ps1 -CheckUpdate
+        Omitir actualizacion:    install.ps1 -NoUpdate
+        Ruta manual:             install.ps1 -GamePath "D:\...\common\Deadlock"
+        Solo algunos mods:       install.ps1 -Mods "ratking-pp"
 
     El framework instala los mods definidos en mods\<id>\mod.json:
       - addons:  VPKs que se copian a game\citadel\addons
@@ -22,7 +22,6 @@ param(
     [switch]$Force,
     [switch]$NoUpdate,
     [switch]$CheckUpdate,
-    [switch]$Update,
     [switch]$SkipUpdate,
     [string]$Mods = "",
     [string]$ModDir = "",
@@ -399,17 +398,9 @@ if($CheckUpdate){
 if(-not $Revert -and -not $NoUpdate -and -not $SkipUpdate){
     $info = Get-UpdateInfo
     if($info){
-        Warn "Nueva version disponible: $($info.Tag) (tenes v$($Config.version))."
+        Warn "Nueva version disponible: $($info.Tag) (tenes v$($Config.version)). Actualizando..."
         if($info.Notes){ Write-Host ""; Write-Host $info.Notes; Write-Host "" }
-        if($Update){
-            Invoke-SelfUpdate $info
-        }
-        $resp = $null
-        try { $resp = Read-Host "Descargar y actualizar ahora? [S/n]" } catch { $resp = "n" }
-        if($resp -notmatch '^(n|no)$'){ Invoke-SelfUpdate $info }
-    } elseif($Update){
-        Ok "Ya tenes la ultima version (v$($Config.version))."
-        exit 0
+        Invoke-SelfUpdate $info
     }
 }
 

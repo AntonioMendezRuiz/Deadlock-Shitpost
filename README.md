@@ -28,9 +28,10 @@ El instalador:
 
 ## Actualizaciones
 
-- Al ejecutar `Instalar.bat`, si hay una versión nueva en GitHub **te avisa y ofrece descargarla**.
-- `Actualizar.bat` fuerza la comprobación y actualiza sin preguntar.
+- **Automáticas:** al ejecutar `Instalar.bat`, si hay una versión nueva en GitHub se descarga,
+  se aplica y se reinstala sola (sin preguntar).
 - `framework\install.ps1 -CheckUpdate` solo consulta la versión.
+- `framework\install.ps1 -NoUpdate` instala sin comprobar actualizaciones.
 
 La actualización descarga el release, reemplaza el framework y los mods (sin tocar `state\`)
 y vuelve a instalar automáticamente.
@@ -50,7 +51,7 @@ y borra el mod. Después reiniciá Deadlock.
 
 ```
 .
-├─ Instalar.bat / Revertir.bat / Actualizar.bat
+├─ Instalar.bat / Revertir.bat
 ├─ framework/
 │  ├─ install.ps1          # instalador / revertidor / actualizador
 │  ├─ apply-update.ps1     # aplica una actualización descargada
