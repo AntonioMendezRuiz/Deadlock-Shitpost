@@ -1,0 +1,30 @@
+{
+  "id": "ratking-pp",
+  "name": "Rat King PP",
+  "version": "1.0.0",
+  "author": "MagnoDeveloper",
+  "description": "Bandera con logo PP, audio de la definitiva y texto 'Por Espa\u00f1a'.",
+  "enabled": true,
+  "addons": [
+    "pak01_dir.vpk",
+    "pak02_dir.vpk",
+    "pak03_dir.vpk",
+    "pak05_dir.vpk",
+    "pak06_dir.vpk"
+  ],
+  "files": [],
+  "localization": [
+    {
+      "file": "resource/localization/citadel_heroes/citadel_heroes_spanish.txt",
+      "replacements": [
+        { "from": "\u00a1Por Ratannia!", "to": "\u00a1Por Espa\u00f1a!" }
+      ]
+    },
+    {
+      "file": "resource/localization/citadel_heroes/citadel_heroes_latam.txt",
+      "replacements": [
+        { "from": "\u00a1Por Ratannia!", "to": "\u00a1Por Espa\u00f1a!" }
+      ]
+    }
+  ]
+}
