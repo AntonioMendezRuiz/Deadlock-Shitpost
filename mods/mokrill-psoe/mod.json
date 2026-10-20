@@ -1,0 +1,13 @@
+﻿{
+  "id": "mokrill-psoe",
+  "name": "Mo & Krill PSOE",
+  "version": "1.0.0",
+  "author": "AntonioMendezRuiz",
+  "description": "Camiseta roja del PSOE para Mo & Krill.",
+  "enabled": true,
+  "addons": [
+    "pak13_dir.vpk"
+  ],
+  "files": [],
+  "localization": []
+}

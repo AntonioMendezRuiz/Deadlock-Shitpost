@@ -1,0 +1,14 @@
+{
+  "id": "billy-betis",
+  "name": "Billy Betis",
+  "version": "1.0.0",
+  "author": "AntonioMendezRuiz",
+  "description": "Camiseta del Real Betis Balompi\u00e9 (rayas verdes y blancas con escudo) para Billy.",
+  "enabled": true,
+  "addons": [
+    "pak10_dir.vpk",
+    "pak11_dir.vpk"
+  ],
+  "files": [],
+  "localization": []
+}

@@ -1,0 +1,26 @@
+{
+  "id": "infernus-arobarcarteras",
+  "name": "Infernus Arobarcarteras",
+  "version": "1.0.0",
+  "author": "AntonioMendezRuiz",
+  "description": "Reproduce el audio de Arobarcarteras al usar Flame Dash de Infernus.",
+  "enabled": true,
+  "addons": [
+    "pak12_dir.vpk"
+  ],
+  "files": [],
+  "localization": [
+    {
+      "file": "resource/localization/citadel_heroes/citadel_heroes_spanish.txt",
+      "replacements": [
+        { "from": "Impulso\u00a0Llameante", "to": "\u00a1A robar carteras!" }
+      ]
+    },
+    {
+      "file": "resource/localization/citadel_heroes/citadel_heroes_latam.txt",
+      "replacements": [
+        { "from": "Impulso\u00a0llameante", "to": "\u00a1A robar carteras!" }
+      ]
+    }
+  ]
+}

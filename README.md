@@ -46,6 +46,9 @@ y elimina el mod. Después reinicia Deadlock.
 | Mod | Descripción |
 |---|---|
 | `ratking-pp` | Bandera de Rat King con logo PP, audio de la definitiva y texto "¡Por España!". |
+| `billy-betis` | Camiseta del Real Betis para Billy. |
+| `infernus-arobarcarteras` | Audio de "A robar carteras" al usar Flame Dash y habilidad renombrada. |
+| `mokrill-psoe` | Camiseta roja del PSOE con logo para Mo & Krill. |
 
 ## Estructura
 
