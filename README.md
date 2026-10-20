@@ -17,11 +17,13 @@ actualicen y reviertan con un instalador automático.
 1. Descarga el ZIP de la última versión desde **Releases** de este repositorio.
 2. Extrae el ZIP en una carpeta (por ejemplo `Documentos\DeadlockMods`).
 3. Cierra Deadlock y ejecuta **`Instalar.bat`**.
+4. Elige qué mods quieres instalar (números separados por comas, `A` para todos,
+   `N` para ninguno; Enter usa la selección actual).
 
 El instalador:
 
 - Detecta Deadlock automáticamente (registro de Steam + `libraryfolders.vdf` + todos los discos).
-- Copia los VPK a `game\citadel\addons`.
+- Copia los VPK de los mods elegidos a `game\citadel\addons`.
 - Agrega los paths de mods a `gameinfo.gi` (con copia de seguridad).
 - Aplica parches de localización (con copia de seguridad).
 - Guarda el estado original en `state\`.
@@ -29,7 +31,7 @@ El instalador:
 ## Actualizaciones
 
 - **Automáticas:** al ejecutar `Instalar.bat`, si hay una versión nueva en GitHub se descarga,
-  se aplica y se reinstala sola (sin preguntar).
+  se aplica y se reinstala sola, conservando los mods que tenías instalados.
 - `framework\install.ps1 -CheckUpdate` solo consulta la versión.
 - `framework\install.ps1 -NoUpdate` instala sin comprobar actualizaciones.
 
@@ -38,8 +40,9 @@ y vuelve a instalar automáticamente.
 
 ## Revertir
 
-Ejecuta **`Revertir.bat`**: restaura `gameinfo.gi`, los textos y los archivos originales,
-y elimina el mod. Después reinicia Deadlock.
+Ejecuta **`Revertir.bat`** y elige qué mods quitar (números, `A` para todos,
+`N` o Enter para cancelar). Si quitas todos, restaura `gameinfo.gi`, los textos
+y los archivos originales. Después reinicia Deadlock.
 
 ## Mods incluidos
 
@@ -105,7 +108,11 @@ Campos:
   Se hace una copia de seguridad automática y se revierte con `Revertir.bat`.
 
 Los mods con `"enabled": false` se omiten. También puedes elegir mods puntuales:
-`install.ps1 -Mods "ratking-pp,mi-mod"`.
+
+- `install.ps1 -Select` muestra un menú para elegir qué instalar.
+- `install.ps1 -Mods "ratking-pp,mi-mod"` instala solo esos mods.
+- `install.ps1 -Revert -Select` muestra un menú para elegir qué desinstalar.
+- `install.ps1 -Revert -Mods "ratking-pp"` desinstala solo esos mods.
 
 ## Publicar una versión
 

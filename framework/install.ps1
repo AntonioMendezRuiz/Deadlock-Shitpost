@@ -3,11 +3,14 @@
 
     Uso:
         Instalar (y actualizar): install.ps1
+        Elegir mods al instalar: install.ps1 -Select
         Revertir:                install.ps1 -Revert
+        Elegir mods al revertir: install.ps1 -Revert -Select
         Ver actualizaciones:     install.ps1 -CheckUpdate
         Omitir actualizacion:    install.ps1 -NoUpdate
         Ruta manual:             install.ps1 -GamePath "D:\...\common\Deadlock"
         Solo algunos mods:       install.ps1 -Mods "ratking-pp"
+        Quitar algunos mods:     install.ps1 -Revert -Mods "ratking-pp"
 
     El framework instala los mods definidos en mods\<id>\mod.json:
       - addons:  VPKs que se copian a game\citadel\addons
@@ -23,6 +26,7 @@ param(
     [switch]$NoUpdate,
     [switch]$CheckUpdate,
     [switch]$SkipUpdate,
+    [switch]$Select,
     [string]$Mods = "",
     [string]$ModDir = "",
     [string]$StateDir = ""
@@ -237,21 +241,120 @@ function Get-AllMods {
     return $list
 }
 
+function Get-ManifestModIds {
+    param($manifest, $all)
+    $ids = @()
+    if($manifest -and ($manifest.PSObject.Properties.Name -contains "mods")){
+        $ids = @($manifest.mods | ForEach-Object { [string]$_ } | Where-Object { $_ })
+    }
+    if($ids.Count -eq 0 -and $manifest -and ($manifest.PSObject.Properties.Name -contains "installedAddons")){
+        $installed = @($manifest.installedAddons | ForEach-Object { [string]$_ } | Where-Object { $_ })
+        foreach($mod in $all){
+            foreach($a in @($mod.addons)){
+                if($installed -contains [string]$a){ $ids += [string]$mod.id; break }
+            }
+        }
+    }
+    return @($ids | Select-Object -Unique)
+}
+
+function Read-ModSelection {
+    param($all, [string[]]$defaultIds, [string[]]$installedIds, [switch]$AllowNone)
+    $items = @($all | Sort-Object @{Expression={[string]$_.name}}, @{Expression={[string]$_.id}})
+    Write-Host ""
+    Info "Mods disponibles:"
+    for($i = 0; $i -lt $items.Count; $i++){
+        $mod = $items[$i]
+        $mark = ""
+        if($installedIds -contains [string]$mod.id){ $mark = " [instalado]" }
+        Write-Host ("  [{0}] {1} ({2}) v{3}{4}" -f ($i + 1), $mod.name, $mod.id, $mod.version, $mark)
+    }
+    $defNums = @()
+    for($i = 0; $i -lt $items.Count; $i++){
+        if($defaultIds -contains [string]$items[$i].id){ $defNums += [string]($i + 1) }
+    }
+    $defText = if($defNums.Count -gt 0){ $defNums -join "," } else { "ninguno" }
+    $tries = 0
+    while($true){
+        $tries++
+        if($tries -gt 20){ Fail "Demasiados intentos de seleccion." }
+        $raw = Read-Host ("Seleccion [1-{0}, A=todos, N=ninguno] (Enter = {1})" -f $items.Count, $defText)
+        $chosen = @()
+        if([string]::IsNullOrWhiteSpace($raw)){
+            if($defNums.Count -gt 0){
+                $chosen = @($items | Where-Object { $defaultIds -contains [string]$_.id })
+            } elseif($AllowNone){
+                return @()
+            } else {
+                $chosen = @($items | Where-Object {
+                    $enabled = $true
+                    if($_.PSObject.Properties.Name -contains "enabled"){ $enabled = [bool]$_.enabled }
+                    $enabled
+                })
+            }
+        } elseif($raw -match '^(a|t|all|todos|\*)$'){
+            $chosen = @($items)
+        } elseif($raw -match '^(n|none|ninguno|0)$'){
+            if($AllowNone){ return @() }
+            Warn "Elegi al menos un mod."
+            continue
+        } else {
+            $bad = @()
+            foreach($n in @($raw -split '[,\s]+' | Where-Object { $_ })){
+                $idx = 0
+                if(-not [int]::TryParse($n, [ref]$idx) -or $idx -lt 1 -or $idx -gt $items.Count){
+                    $bad += $n
+                    continue
+                }
+                $chosen += $items[$idx - 1]
+            }
+            if($bad.Count -gt 0){ Warn "Opcion invalida: $($bad -join ', ')"; continue }
+        }
+        if(-not $chosen -and -not $AllowNone){ Warn "Elegi al menos un mod."; continue }
+        return @($chosen | Sort-Object id -Unique)
+    }
+}
+
 function Select-Mods {
     param($all)
-    $ids = @()
-    if($Mods){ $ids = @($Mods.Split(',') | ForEach-Object { $_.Trim() } | Where-Object { $_ }) }
-    $sel = @()
-    foreach($m in $all){
+    $manifest = Read-Manifest
+    $installedIds = @(Get-ManifestModIds $manifest $all)
+    if($Mods){
+        $ids = @($Mods.Split(',') | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+        $sel = @()
+        foreach($m in $all){
+            if($ids -contains [string]$m.id){ $sel += $m }
+        }
+        foreach($id in $ids){
+            if(-not ($all | Where-Object { [string]$_.id -eq $id })){ Warn "Mod inexistente: $id" }
+        }
+        if(-not $sel){ Fail "No hay mods para instalar." }
+        return $sel
+    }
+    if($Select){
+        $defaultIds = @()
+        if($installedIds.Count -gt 0){
+            $defaultIds = $installedIds
+        } else {
+            $defaultIds = @($all | Where-Object {
+                $enabled = $true
+                if($_.PSObject.Properties.Name -contains "enabled"){ $enabled = [bool]$_.enabled }
+                $enabled
+            } | ForEach-Object { [string]$_.id })
+        }
+        $sel = @(Read-ModSelection -all $all -defaultIds $defaultIds -installedIds $installedIds)
+        if(-not $sel){ Fail "No hay mods para instalar." }
+        return $sel
+    }
+    if($installedIds.Count -gt 0){
+        $sel = @($all | Where-Object { $installedIds -contains [string]$_.id })
+        if($sel.Count -gt 0){ return $sel }
+    }
+    $sel = @($all | Where-Object {
         $enabled = $true
-        if($m.PSObject.Properties.Name -contains "enabled"){ $enabled = [bool]$m.enabled }
-        if($ids.Count -gt 0){
-            if($ids -contains $m.id){ $sel += $m }
-        } elseif($enabled){ $sel += $m }
-    }
-    foreach($id in $ids){
-        if(-not ($all | Where-Object { $_.id -eq $id })){ Warn "Mod inexistente: $id" }
-    }
+        if($_.PSObject.Properties.Name -contains "enabled"){ $enabled = [bool]$_.enabled }
+        $enabled
+    })
     if(-not $sel){ Fail "No hay mods para instalar." }
     return $sel
 }
@@ -383,6 +486,73 @@ function Apply-ModLocalization {
     return $records
 }
 
+function Restore-LocalizationBackups {
+    param($manifest)
+    $entries = @()
+    if($manifest.PSObject.Properties.Name -contains "locPatched"){ $entries = @($manifest.locPatched) }
+    foreach($e in $entries){
+        if($e -is [string]){
+            $bak = Join-Path $LocDir $e
+            $found = Get-ChildItem (Join-Path $citadel "resource\localization") -Recurse -File -Filter $e -ErrorAction SilentlyContinue | Select-Object -First 1
+            if($found -and (Test-Path -LiteralPath $bak)){
+                Copy-Item -LiteralPath $bak -Destination $found.FullName -Force
+                Ok "Localizacion restaurada: $e"
+            }
+        } else {
+            $bak = Join-Path $LocDir ([string]$e.backup)
+            $dst = Join-Path $citadel ([string]$e.file)
+            if((Test-Path -LiteralPath $bak) -and (Test-Path -LiteralPath $dst)){
+                Copy-Item -LiteralPath $bak -Destination $dst -Force
+                Ok "Localizacion restaurada: $($e.file)"
+            }
+        }
+    }
+}
+
+function Invoke-ModUninstall {
+    param($manifest, $all, [string[]]$removeIds)
+    $installedIds = @(Get-ManifestModIds $manifest $all)
+    $removeIds = @($removeIds | ForEach-Object { [string]$_ } | Where-Object { $_ } | Select-Object -Unique)
+    foreach($id in $removeIds){
+        if(-not ($installedIds -contains $id)){ Warn "No estaba instalado: $id" }
+    }
+    $removeIds = @($removeIds | Where-Object { $installedIds -contains $_ })
+    if($removeIds.Count -eq 0){ return $true }
+    $keepIds = @($installedIds | Where-Object { $removeIds -notcontains $_ })
+    if($keepIds.Count -eq 0){ return $false }
+
+    $keepMods = @($all | Where-Object { $keepIds -contains [string]$_.id })
+    $removeMods = @($all | Where-Object { $removeIds -contains [string]$_.id })
+
+    Restore-LocalizationBackups $manifest
+
+    $keepAddons = @()
+    foreach($mod in $keepMods){ foreach($a in @($mod.addons)){ if($a){ $keepAddons += [string]$a } } }
+    $removeAddons = @()
+    foreach($mod in $removeMods){ foreach($a in @($mod.addons)){ if($a){ $removeAddons += [string]$a } } }
+
+    foreach($name in ($removeAddons | Select-Object -Unique)){
+        if($keepAddons -contains $name){ continue }
+        $target = Join-Path $addons $name
+        if(Test-Path -LiteralPath $target){ Remove-Item -LiteralPath $target -Force; Ok "Eliminado del juego: $name" }
+        $bak = Join-Path $bakAddons $name
+        if(Test-Path -LiteralPath $bak){ Copy-Item -LiteralPath $bak -Destination $target -Force; Ok "Restaurado original: $name" }
+    }
+
+    $locNew = @()
+    foreach($mod in $keepMods){ $locNew += @(Apply-ModLocalization $mod) }
+
+    $manifest | Add-Member -NotePropertyName installedAddons -NotePropertyValue @($keepAddons | Select-Object -Unique) -Force
+    $manifest | Add-Member -NotePropertyName locPatched -NotePropertyValue @($locNew) -Force
+    $manifest | Add-Member -NotePropertyName mods -NotePropertyValue @($keepIds) -Force
+    $manifest | Add-Member -NotePropertyName frameworkVersion -NotePropertyValue $Config.version -Force
+    $manifest | Add-Member -NotePropertyName gamePath -NotePropertyValue $GamePath -Force
+    Write-Manifest $manifest
+    Ok "Desinstalados: $($removeIds -join ', ')"
+    Ok "Conservados: $($keepIds -join ', ')"
+    return $true
+}
+
 # =====================  MAIN  =====================
 if($CheckUpdate){
     $info = Get-UpdateInfo
@@ -418,6 +588,26 @@ if($Revert){
     $m = Read-Manifest
     if(-not $m){ Fail "No hay respaldo para revertir (no existe $ManifestPath)." }
 
+    $removeIds = @()
+    if($Mods){
+        $removeIds = @($Mods.Split(',') | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    } elseif($Select){
+        $allRevert = @(Get-AllMods)
+        $installedIds = @(Get-ManifestModIds $m $allRevert)
+        if($installedIds.Count -eq 0){ Fail "No hay mods instalados para desinstalar." }
+        $picked = @(Read-ModSelection -all $allRevert -defaultIds @() -installedIds $installedIds -AllowNone)
+        if($picked.Count -eq 0){ Info "No se desinstalo nada."; exit 0 }
+        $removeIds = @($picked | ForEach-Object { [string]$_.id })
+    }
+
+    if($removeIds.Count -gt 0){
+        $allRevert = @(Get-AllMods)
+        if(Invoke-ModUninstall $m $allRevert $removeIds){
+            Ok "Reinicia Deadlock."
+            exit 0
+        }
+    }
+
     $bakGi = Join-Path $StateDir "gameinfo.gi"
     if(Test-Path -LiteralPath $bakGi){
         Copy-Item -LiteralPath $bakGi -Destination $gi -Force
@@ -426,25 +616,7 @@ if($Revert){
         Warn "No habia gameinfo.gi en el respaldo; no lo toco."
     }
 
-    $locEntries = @()
-    if($m.PSObject.Properties.Name -contains "locPatched"){ $locEntries = @($m.locPatched) }
-    foreach($e in $locEntries){
-        if($e -is [string]){
-            $bak = Join-Path $LocDir $e
-            $found = Get-ChildItem (Join-Path $citadel "resource\localization") -Recurse -File -Filter $e -ErrorAction SilentlyContinue | Select-Object -First 1
-            if($found -and (Test-Path -LiteralPath $bak)){
-                Copy-Item -LiteralPath $bak -Destination $found.FullName -Force
-                Ok "Localizacion restaurada: $e"
-            }
-        } else {
-            $bak = Join-Path $LocDir ([string]$e.backup)
-            $dst = Join-Path $citadel ([string]$e.file)
-            if((Test-Path -LiteralPath $bak) -and (Test-Path -LiteralPath $dst)){
-                Copy-Item -LiteralPath $bak -Destination $dst -Force
-                Ok "Localizacion restaurada: $($e.file)"
-            }
-        }
-    }
+    Restore-LocalizationBackups $m
 
     $names = @()
     if($m.PSObject.Properties.Name -contains "installedAddons"){ $names = @($m.installedAddons) }

@@ -1,7 +1,7 @@
 {
   "id": "infernus-arobarcarteras",
   "name": "Infernus Arobarcarteras",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "AntonioMendezRuiz",
   "description": "Reproduce el audio de Arobarcarteras al usar Flame Dash de Infernus.",
   "enabled": true,
