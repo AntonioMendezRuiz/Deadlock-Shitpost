@@ -112,12 +112,13 @@ Los mods con `"enabled": false` se omiten. También podés elegir mods puntuales
    powershell -ExecutionPolicy Bypass -File scripts\pack-release.ps1
    ```
 
-3. Subí el tag y el ZIP como release (el tag debe ser `vX.Y.Z`):
+3. Subí el tag y el ZIP como release (el tag debe ser `vX.Y.Z`). Ejecutá esto
+   **desde la carpeta del repo** o pasá `-R` para indicar el repositorio:
 
    ```powershell
    git tag v1.0.0
    git push origin v1.0.0
-   gh release create v1.0.0 dist\deadlock-mods-1.0.0.zip --title "v1.0.0" --notes "Cambios..."
+   gh release create v1.0.0 dist\deadlock-mods-1.0.0.zip -R AntonioMendezRuiz/Deadlock-Mod --title "v1.0.0" --notes "Cambios..."
    ```
 
 El instalador consulta `https://api.github.com/repos/<OWNER>/<REPO>/releases/latest`
