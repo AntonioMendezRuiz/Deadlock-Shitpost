@@ -119,7 +119,7 @@ Los mods con `"enabled": false` se omiten. También podés elegir mods puntuales
    ```powershell
    git tag v1.0.0
    git push origin v1.0.0
-   gh release create v1.0.0 dist\deadlock-mods-1.0.0.zip -R AntonioMendezRuiz/Deadlock-Mod --title "v1.0.0" --notes "Cambios..."
+   gh release create v1.0.0 dist\deadlock-mods-1.0.0.zip -R AntonioMendezRuiz/Deadlock-Shitpost --title "v1.0.0" --notes "Cambios..."
    ```
 
 El instalador consulta `https://api.github.com/repos/<OWNER>/<REPO>/releases/latest`
