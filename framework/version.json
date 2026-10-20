@@ -1,6 +1,6 @@
-{
+﻿{
   "name": "Deadlock Mods",
   "version": "1.0.0",
-  "repo": "OWNER/deadlock-mods",
+  "repo": "AntonioMendezRuiz/deadlock-mods",
   "assetPattern": "deadlock-mods-.*\\.zip$"
 }
