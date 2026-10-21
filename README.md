@@ -52,6 +52,8 @@ y los archivos originales. Después reinicia Deadlock.
 | `billy-betis` | Camiseta del Real Betis para Billy. |
 | `infernus-arobarcarteras` | Audio de "A robar carteras" al usar Flame Dash y habilidad renombrada. |
 | `mokrill-psoe` | Camiseta roja del PSOE con logo para Mo & Krill. |
+| `grey-talon-glovo` | Cubo de Glovo con logo para Grey Talon (reemplaza el carcaj y quita la falda). |
+
 
 ## Estructura
 

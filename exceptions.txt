@@ -1,0 +1,22 @@
+---------------
+File: C:\Users\mende\AppData\Local\Temp\opencode\audio-amp\inferno_loud.vsnd_c
+Exception: ZstdSharp.ZstdException: Data corruption detected
+   at ZstdSharp.ThrowHelper.ThrowException(UIntPtr returnValue, String message)
+   at ZstdSharp.ThrowHelper.EnsureZstdSuccess(UIntPtr returnValue)
+   at ZstdSharp.Decompressor.TryUnwrap(ReadOnlySpan`1 src, Span`1 dest, Int32& written)
+   at ValveResourceFormat.ResourceTypes.BinaryKV3.DecompressZSTD(Decompressor zstdDecompressor, BinaryReader reader, Span`1 output, Int32 compressedSize) in /_/ValveResourceFormat/Resource/ResourceTypes/BinaryKV3.cs:line 203
+   at ValveResourceFormat.ResourceTypes.BinaryKV3.ReadBuffer(Int32 version, BinaryReader reader) in /_/ValveResourceFormat/Resource/ResourceTypes/BinaryKV3.cs:line 527
+   at ValveResourceFormat.Resource.Read(Stream input, Boolean verifyFileSize, Boolean leaveOpen) in /_/ValveResourceFormat/Resource/Resource.cs:line 299
+   at CLI.Decompiler.ProcessFile(String path, Stream stream, String originalPath, IFileLoader fileLoader) in /_/CLI/Decompiler.cs:line 656
+
+---------------
+File: C:\Users\mende\AppData\Local\Temp\opencode\audio-amp\bulk\pak11\tmp\punkgoat_tether_cast.check.vsnd_c
+Exception: ZstdSharp.ZstdException: Src size is incorrect
+   at ZstdSharp.ThrowHelper.ThrowException(UIntPtr returnValue, String message)
+   at ZstdSharp.ThrowHelper.EnsureZstdSuccess(UIntPtr returnValue)
+   at ZstdSharp.Decompressor.TryUnwrap(ReadOnlySpan`1 src, Span`1 dest, Int32& written)
+   at ValveResourceFormat.ResourceTypes.BinaryKV3.DecompressZSTD(Decompressor zstdDecompressor, BinaryReader reader, Span`1 output, Int32 compressedSize) in /_/ValveResourceFormat/Resource/ResourceTypes/BinaryKV3.cs:line 203
+   at ValveResourceFormat.ResourceTypes.BinaryKV3.ReadBuffer(Int32 version, BinaryReader reader) in /_/ValveResourceFormat/Resource/ResourceTypes/BinaryKV3.cs:line 658
+   at ValveResourceFormat.Resource.Read(Stream input, Boolean verifyFileSize, Boolean leaveOpen) in /_/ValveResourceFormat/Resource/Resource.cs:line 299
+   at CLI.Decompiler.ProcessFile(String path, Stream stream, String originalPath, IFileLoader fileLoader) in /_/CLI/Decompiler.cs:line 656
+
