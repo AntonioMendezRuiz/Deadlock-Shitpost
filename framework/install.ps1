@@ -262,12 +262,12 @@ function Read-ModSelection {
     param($all, [string[]]$defaultIds, [string[]]$installedIds, [switch]$AllowNone)
     $items = @($all | Sort-Object @{Expression={[string]$_.name}}, @{Expression={[string]$_.id}})
     Write-Host ""
-    Info "Mods disponibles:"
+    Info "Personajes disponibles:"
     for($i = 0; $i -lt $items.Count; $i++){
         $mod = $items[$i]
         $mark = ""
         if($installedIds -contains [string]$mod.id){ $mark = " [instalado]" }
-        Write-Host ("  [{0}] {1} ({2}) v{3}{4}" -f ($i + 1), $mod.name, $mod.id, $mod.version, $mark)
+        Write-Host ("  [{0}] {1}{2}" -f ($i + 1), $mod.name, $mark)
     }
     $defNums = @()
     for($i = 0; $i -lt $items.Count; $i++){

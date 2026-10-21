@@ -44,15 +44,15 @@ Ejecuta **`Revertir.bat`** y elige qué mods quitar (números, `A` para todos,
 `N` o Enter para cancelar). Si quitas todos, restaura `gameinfo.gi`, los textos
 y los archivos originales. Después reinicia Deadlock.
 
-## Mods incluidos
+## Personajes incluidos
 
-| Mod | Descripción |
+| Personaje | Descripción |
 |---|---|
-| `ratking-pp` | Bandera de Rat King con logo PP, audio de la definitiva y texto "¡Por España!". |
-| `billy-betis` | Camiseta del Real Betis para Billy. |
-| `infernus-arobarcarteras` | Audio de "A robar carteras" al usar Flame Dash y habilidad renombrada. |
-| `mokrill-psoe` | Camiseta roja del PSOE con logo para Mo & Krill. |
-| `grey-talon-glovo` | Cubo de Glovo con logo para Grey Talon (reemplaza el carcaj y quita la falda). |
+| Billy | Camiseta del Real Betis para Billy. |
+| Grey Talon | Cubo de Glovo con logo para Grey Talon (reemplaza el carcaj y quita la falda). |
+| Infernus | Audio de "A robar carteras" al usar Flame Dash y habilidad renombrada. |
+| Mo & Krill | Camiseta roja del PSOE con logo para Mo & Krill. |
+| Rat King | Bandera de Rat King con logo PP, audio de la definitiva y texto "¡Por España!". |
 
 
 ## Estructura
@@ -81,7 +81,7 @@ y los archivos originales. Después reinicia Deadlock.
 ```json
 {
   "id": "mi-mod",
-  "name": "Mi Mod",
+  "name": "Mi Personaje",
   "version": "1.0.0",
   "author": "TuNombre",
   "description": "Qué hace el mod.",
@@ -103,6 +103,7 @@ y los archivos originales. Después reinicia Deadlock.
 
 Campos:
 
+- **`name`**: nombre del personaje que aparece en el instalador.
 - **`addons`**: nombres de archivos dentro de `payload\` que se copian a `game\citadel\addons\`.
 - **`files`** *(opcional)*: copias arbitrarias. `source` es relativo a la carpeta del mod;
   `dest` es relativo a la raíz de Deadlock.
